@@ -84,6 +84,7 @@ CREATE TABLE Preguntas (
   respuesta_correcta VARCHAR NOT NULL
 );
 
+
 CREATE TABLE Usuarios (
   id_Usuario SERIAL PRIMARY KEY,
   nombre VARCHAR(255) NOT NULL,
@@ -106,46 +107,143 @@ CREATE TABLE Respuestas (
       ON DELETE CASCADE   
 );
 
+/*5. Agrega 5 usuarios y 5 preguntas.*/
+
+INSERT INTO Usuarios (nombre ,edad) 
+VALUES  ('Elena', 1),
+        ('Carolina', 36),
+        ('Daniel', 36),
+        ('Coni', 13),
+        ('Renato', 5);
 
 
+INSERT INTO Preguntas (pregunta, respuesta_correcta) 
+VALUES  ('¿Cuál es la capital de Francia?', 'París'),
+        ('¿En qué año comenzó la Segunda Guerra Mundial?', '1939'),
+        ('¿Cuál es el elemento químico más abundante en la corteza terrestre?', 'Oxígeno'),
+        ('¿Quién escribió "Cien años de soledad"?', 'Gabriel García Márquez'),
+        ('¿Cuál es el océano más grande del mundo?', 'Pacífico');
 
 
-/*5. Agrega 5 usuarios y 5 preguntas.
-a. La primera pregunta debe estar respondida correctamente dos veces, por dos
+/*a. La primera pregunta debe estar respondida correctamente dos veces, por dos
 usuarios diferentes.*/
+INSERT INTO Respuestas (nombre, usuario_id, pregunta_id) 
+VALUES  ('París', 1, 1),
+        ('París', 2, 1),
+        ('1939', 3, 2),
+        ('Berlín', 4, 3),
+        ('Shakespeare', 5, 4);
+
+
+
+
 /*b. La segunda pregunta debe estar contestada correctamente solo por un
-usuario.*/
+usuario.*/INSERT INTO Respuestas (nombre, usuario_id, pregunta_id) 
+VALUES  ('1939', 1, 2),
+        ('Nitrógeno', 2, 3),
+        ('Julio Cortázar', 3, 4),
+        ('Atlántico', 4, 5);
+
+
+
 /*c. Las otras dos preguntas deben tener respuestas incorrectas.
 Contestada correctamente significa que la respuesta indicada en la tabla respuestas
 es exactamente igual al texto indicado en la tabla de preguntas.
-(1 punto)*/
-
-
-
+*/
+INSERT INTO Respuestas (nombre, usuario_id, pregunta_id) 
+VALUES  ('Roma', 5, 1),
+        ('1945', 4, 2),
+        ('Carbono', 3, 3),
+        ('Jorge Luis Borges', 2, 4),
+        ('Índico', 1, 5);
 
 
 
 /*6. Cuenta la cantidad de respuestas correctas totales por usuario (independiente de la
 pregunta).
 (1 punto)*/
+SELECT
+  u.nombre AS nombre_usuario,
+  COUNT(r.id_Respuesta) AS respuestas_correctas_totales
+FROM
+  Usuarios u
+JOIN
+  Respuestas r ON u.id_Usuario = r.usuario_id
+JOIN
+  Preguntas p ON r.pregunta_id = p.id_pregunta
+WHERE
+  r.nombre = p.respuesta_correcta
+GROUP BY
+  u.id_Usuario, u.nombre
+ORDER BY
+  u.id_Usuario;
 
 
 /*7. Por cada pregunta, en la tabla preguntas, cuenta cuántos usuarios respondieron
 correctamente.
 (1 punto)*/
+
+SELECT
+  p.pregunta,
+  COUNT(DISTINCT r.usuario_id) AS usuarios_respondieron_correctamente
+FROM
+  Preguntas p
+LEFT JOIN
+  Respuestas r ON p.id_pregunta = r.pregunta_id AND p.respuesta_correcta = r.nombre
+GROUP BY
+  p.id_pregunta, p.pregunta
+ORDER BY
+  p.id_pregunta;
+
+
+
 /*
 8. Implementa un borrado en cascada de las respuestas al borrar un usuario. Prueba la
 implementación borrando el primer usuario.
 (1 punto)
 */
 
+DELETE FROM Usuarios WHERE id_Usuario = 1;
+
 /* 9. Crea una restricción que impida insertar usuarios menores de 18 años en la base de
 datos.
 
-*/ALTER TABLE Usuarios
-ADD CONSTRAINT CK_Usuarios_edad CHECK (edad >= 18);
+*/
 
-(1 punto)
+Select * from usuarios;
+delete  from respuestas;
+delete from usuarios;
+
+
+ALTER TABLE Usuarios
+ADD CONSTRAINT Usuarios_edad 
+CHECK (edad >= 18);
+
+--Caso que fallara por el nuevo check
+INSERT INTO Usuarios (nombre ,edad) 
+VALUES  ('Elena', 1)
+
+--caso que volvera a pasar 
+INSERT INTO Usuarios (nombre ,edad) 
+VALUES  ('Elena', 19)
+
+
+Select * from usuarios;
+
+/*
 10. Altera la tabla existente de usuarios agregando el campo email. Debe tener la
 restricción de ser único.
  */
+ALTER TABLE Usuarios
+ADD COLUMN email VARCHAR(255) UNIQUE;
+
+select * from usuarios;
+
+INSERT INTO Usuarios (nombre ,edad,email) 
+VALUES  ('Carolina', 36, 'PruebaCorreo@test.com');
+INSERT INTO Usuarios (nombre ,edad, email) 
+VALUES  ('Daniel', 36, 'PruebaCorreo@test.com')
+
+INSERT INTO Usuarios (nombre ,edad, email) 
+VALUES  ('Coni', 20, 'PruebaCorreo2@test.com')
+
