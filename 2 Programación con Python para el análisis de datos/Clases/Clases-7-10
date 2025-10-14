@@ -1,0 +1,35 @@
+import pandas as pd
+import numpy as np
+
+# Crear un DataFrame con valores numéricos y valores problemáticos
+data = {
+    "Nombre": ["Juan", "María", "Carlos", "Ana", "Luis", "Sofía", "Pedro", "Lucía", "Diego", "Elena"],
+    "Edad": [25, 30, 35, np.nan, 40, "NaN", 50, None, 60, "N/A"],
+    "Pasos al día": [10000, 8000, "nAn", 9000, np.inf, 6000, -np.inf, 7000, 5000, 9500],
+    "Peso (kg)": [70, 65, 80, 75, 90, "NULL", 85, "sin registro", 95, "NaN"],
+    "Altura (m)": [1.75, 1.80, 1.65, 1.70, 1.85, 1.78, 1.76, None, "", 1.82]
+}
+
+# Guardar como archivo Excel
+file_path = "datos_prueba.xlsx"
+df = pd.DataFrame(data)
+df.to_excel(file_path, index=False)
+# Cargar el archivo para mostrar cómo lo interpreta Pandas por defecto
+df_cargado = pd.read_excel(file_path)
+df_cargado
+cargar un archivo
+# Recargar el archivo con especificaciones para manejar valores problemáticos
+df_cargado2 = pd.read_excel(file_path, na_values=["nAn", "sin registro"])
+
+
+df_cargado2
+convertir a NaN
+# Reemplazar inf y -inf por NaN manualmente
+df_cargado2.replace([np.inf, -np.inf], np.nan, inplace=True)
+df_cargado2
+convertir inf a NaN
+# Calcular la media de la columna "Edad" ignorando los valores NaN
+media_edad = df_cargado2["Edad"].mean()
+# Mostrar el resultado
+media_edad
+calcular la media sin NaN
