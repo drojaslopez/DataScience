@@ -1,6 +1,6 @@
 services:
   db:
-    image: postgres:latest
+    image: postgres
     container_name: desafio_db
     restart: unless-stopped
     # Usa el archivo .env para pasar las credenciales de forma segura
@@ -9,16 +9,15 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - ./DB-DATA:/var/lib/postgresql/data
-    
-    
+      - ./DB-DATA:/var/lib/postgresql/18/docker
+
     # Define un healthcheck para asegurar que el servicio está listo
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
       interval: 10s
       timeout: 5s
       retries: 5
-      
+
     # Limita los recursos que el contenedor puede usar para evitar problemas de rendimiento
     deploy:
       resources:
