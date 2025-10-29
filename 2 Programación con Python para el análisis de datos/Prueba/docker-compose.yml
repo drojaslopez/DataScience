@@ -1,0 +1,31 @@
+services:
+  db:
+    image: postgres:latest
+    container_name: desafio_db
+    restart: unless-stopped
+    # Usa el archivo .env para pasar las credenciales de forma segura
+    env_file:
+      - ./.env
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./DB-DATA:/var/lib/postgresql/data
+    
+    
+    # Define un healthcheck para asegurar que el servicio está listo
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      
+    # Limita los recursos que el contenedor puede usar para evitar problemas de rendimiento
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+        reservations:
+          memory: 256M
+
+volumes:
+  postgres_data:
