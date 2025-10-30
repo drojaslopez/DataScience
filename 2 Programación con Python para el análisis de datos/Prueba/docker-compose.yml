@@ -1,11 +1,15 @@
 services:
   db:
-    image: postgres:latest
+    image: postgres:14.19-alpine3.21
     container_name: desafio_db
     restart: unless-stopped
     # Usa el archivo .env para pasar las credenciales de forma segura
     env_file:
       - ./.env
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
     ports:
       - "5432:5432"
     volumes:
